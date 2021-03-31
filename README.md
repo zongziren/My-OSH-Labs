@@ -1,2 +1,4 @@
 # OSH-2021-Labs
-A repository to store the labs in USTC-OSH
+## author:PB19000362 钟书锐
+
+A repository to store the labs in USTC-OSH lesson.
