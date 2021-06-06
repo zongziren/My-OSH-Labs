@@ -53,4 +53,3 @@ offset：被映射对象内容的起点
 
 eg:echo $USER 
 
-- 
