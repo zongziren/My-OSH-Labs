@@ -51,5 +51,12 @@ offset：被映射对象内容的起点
 
 - 把$开头短语理解为环境变量 
 
-eg:echo $USER 
+eg:echo $USER
+
+## 其它
+
+- 所有源码放在src/ 下
+
+- Cargo.tomal已push可以直接cargo run 运行
+
 
