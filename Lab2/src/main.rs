@@ -105,8 +105,6 @@ fn main() {
                             .into_raw_fd();
                         unsafe { Stdio::from_raw_fd(fout) }
                     } else {
-                        // there are no more commands piped behind this one
-                        // send output to shell stdout
                         Stdio::inherit()
                     };
 
@@ -165,16 +163,24 @@ fn outputhead() {
     }
 }
 
-fn redirect(cmd: &str) -> (String, i32, &str) {
+fn redirect(cmd: &str) -> (String, i32, &str, String) {
     //input cmd
     //output cmd before redirect signal
     //output retype
     //output in/output file
+    //output tcp
     //用于拆分"<",">>",">"
     let mut command_copy = cmd.trim().split_whitespace();
     let mut new_cmd = cmd;
     let mut file = "";
+    let mut tcp = String::new();
     let retype: i32;
+    //0:无重定向
+    //1:普通<
+    //2:普通>
+    //3:普通>>
+    //4:tcp+<
+    //5:tcp+>
     loop {
         if let Some(string) = command_copy.next() {
             if string == "<" {
@@ -183,7 +189,13 @@ fn redirect(cmd: &str) -> (String, i32, &str) {
                     break;
                 }
                 new_cmd = new_cmd.split_once("<").unwrap().0;
-                retype = 1;
+                if file.find("/dev/tcp/").is_some() {
+                    tcp = file.replace("/dev/tcp/", "");
+                    tcp = tcp.replacen("/", ":", 1);
+                    retype = 4;
+                } else {
+                    retype = 1;
+                }
                 break;
             }
             if string == ">" {
@@ -192,7 +204,13 @@ fn redirect(cmd: &str) -> (String, i32, &str) {
                     break;
                 }
                 new_cmd = new_cmd.split_once(">").unwrap().0;
-                retype = 2;
+                if file.find("/dev/tcp/").is_some() {
+                    tcp = file.replace("/dev/tcp/", "");
+                    tcp = tcp.replacen("/", ":", 1);
+                    retype = 5;
+                } else {
+                    retype = 2;
+                }
                 break;
             }
             if string == ">>" {
@@ -209,5 +227,6 @@ fn redirect(cmd: &str) -> (String, i32, &str) {
             break;
         }
     }
-    (new_cmd.to_string(), retype, file)
+
+    (new_cmd.to_string(), retype, file, tcp)
 }
