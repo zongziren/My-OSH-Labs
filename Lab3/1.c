@@ -32,21 +32,27 @@ void *handle_chat(void *data)
         while (*p != '\0')
         {
             if (*p == '\n')
+            //发送遇到'\n'之前的数据
             {
                 strncpy(evey_message, message_recv, p - message_recv + 1);
                 evey_message[p - message_recv + 1] = '\0';
+                //结尾添加'\0'
                 strcpy(message_recv, p);
                 strcat(message_send, evey_message);
+                //在"Message后接截取后的单次消息"
                 while (1)
                 {
                     len_send = send(pipe->fd_recv, message_send, strlen(message_send), 0);
                     if (len_send >= 0 && len_send < strlen(message_send))
+                        //如果单次发送的数据少于应该发送的数据
+                        //再次发送未发送数据
                         strcpy(message_send, message_send + len_send);
                     else
                         break;
                 }
                 strcpy(message_send, "Message:");
                 memset(evey_message, 0, sizeof(evey_message));
+                //初始化
             }
             p++;
         }
