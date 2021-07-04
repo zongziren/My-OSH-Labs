@@ -4,5 +4,11 @@
 
 ### 1.实现以换行为分隔符的消息分割
 
-handle_chat()函数中在receive之后对数据进行分析
+handle_chat()函数通过recv()把数据存入字符串message_recv，循环查询到\n之后加入到待发送的单条消息字符串evey_message中，同时更新字符串为截取后的部分，继续循环，直到读取到'\0'。
+
+### 2.处理可能的 `send` 阻塞
+
+对于需要发送的单条消息，发送后比较len_send和strlen(message_send)，如果成功发送的消息长度小于单条消息的长度，证明遇到阻塞，把message_send未发送部分重新发送。
+
+##
 
