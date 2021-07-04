@@ -10,5 +10,5 @@ handle_chat()函数通过recv()把数据存入字符串message_recv，循环查�
 
 对于需要发送的单条消息，发送后比较len_send和strlen(message_send)，如果成功发送的消息长度小于单条消息的长度，证明遇到阻塞，把message_send未发送部分重新发送。
 
-##
+### 利用多线程技术实现多人聊天室
 
